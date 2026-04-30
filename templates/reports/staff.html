@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Кадровый состав{% endblock %}
+{% block content %}
+<h2 class="mb-4">Кадровый состав</h2>
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ total }}</div><div class="stat-label">Всего сотрудников</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ avg_experience }}</div><div class="stat-label">Средний стаж (лет)</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ high_qual }}</div><div class="stat-label">С высшей категорией</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ high_qual_pct }}%</div><div class="stat-label">Доля с высшей категорией</div></div></div>
+</div>
+
+<div class="card">
+  <div class="card-header">По должностям</div>
+  <table class="table mb-0">
+    <thead class="table-light"><tr><th>Должность</th><th>Количество</th></tr></thead>
+    <tbody>
+      {% for position, count in by_position %}
+      <tr><td>{{ position }}</td><td>{{ count }}</td></tr>
+      {% empty %}
+      <tr><td colspan="2" class="text-center text-muted">Сотрудники не заведены</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

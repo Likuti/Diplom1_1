@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Главная — ИС «Детский сад»{% endblock %}
+{% block content %}
+<h2 class="mb-4">Сводка по учреждению</h2>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ total_active_children }}</div><div class="stat-label">Активных воспитанников</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ total_groups }}</div><div class="stat-label">Групп всего</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ total_employees }}</div><div class="stat-label">Сотрудников</div></div></div>
+  <div class="col-md-3"><div class="stat-card"><div class="stat-value">{{ month_attendance_pct }}%</div><div class="stat-label">Посещаемость за {{ period_label }}</div></div></div>
+</div>
+
+<div class="card">
+  <div class="card-header">Наполняемость групп</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead class="table-light">
+        <tr><th>Группа</th><th>Сейчас</th><th>Лимит</th><th>%</th><th style="width:30%">Загрузка</th></tr>
+      </thead>
+      <tbody>
+        {% for g in group_stats %}
+        <tr>
+          <td><a href="{% url 'groups:detail' g.id %}">{{ g.name }}</a></td>
+          <td>{{ g.current_count }}</td>
+          <td>{{ g.max_capacity }}</td>
+          <td>{{ g.occupancy_pct }}%</td>
+          <td>
+            <div class="bar {% if g.occupancy_pct >= 100 %}danger{% elif g.occupancy_pct >= 90 %}warn{% endif %}">
+              <span style="width: {{ g.occupancy_pct }}%"></span>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted">Группы ещё не заведены</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

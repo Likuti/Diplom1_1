@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Посещаемость{% endblock %}
+{% block content %}
+<h2 class="mb-4">Отметка посещаемости</h2>
+
+<form method="get" class="row g-3 align-items-end mb-4">
+  <div class="col-md-4">
+    <label class="form-label">Группа</label>
+    <select name="group_id" class="form-select" onchange="this.form.submit()">
+      <option value="">— Выбрать —</option>
+      {% for g in groups %}
+        <option value="{{ g.id }}" {% if g.id == selected_group_id %}selected{% endif %}>{{ g.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Дата</label>
+    <input type="date" name="date" value="{{ selected_date }}" class="form-control" onchange="this.form.submit()">
+  </div>
+</form>
+
+{% if selected_group_id %}
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="group_id" value="{{ selected_group_id }}">
+  <input type="hidden" name="date" value="{{ selected_date }}">
+  <div class="card">
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead class="table-light">
+          <tr><th>Воспитанник</th><th style="width:140px">Присутствует</th><th>Причина отсутствия</th></tr>
+        </thead>
+        <tbody>
+          {% for child in children %}
+          <tr>
+            <td>{{ child.full_name }}</td>
+            <td>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="present_{{ child.id }}"
+                       id="present_{{ child.id }}"
+                       {% if child.existing_record %}{% if child.existing_record.is_present %}checked{% endif %}{% else %}checked{% endif %}>
+              </div>
+            </td>
+            <td>
+              <select class="form-select form-select-sm" name="reason_{{ child.id }}">
+                <option value="">—</option>
+                {% for code, label in absence_reasons %}
+                  <option value="{{ code }}" {% if child.existing_record.absence_reason == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" class="text-center text-muted">В этой группе нет активных воспитанников</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% if children %}
+    <div class="mt-3"><button type="submit" class="btn btn-primary">Сохранить посещаемость</button></div>
+  {% endif %}
+</form>
+{% else %}
+<div class="alert alert-info">Выберите группу, чтобы отметить посещаемость.</div>
+{% endif %}
+{% endblock %}

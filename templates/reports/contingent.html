@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Движение контингента{% endblock %}
+{% block content %}
+<h2 class="mb-4">Движение контингента</h2>
+<form method="get" class="row g-3 align-items-end mb-4">
+  <div class="col-md-3"><label class="form-label">С</label><input type="date" name="from" value="{{ period_from }}" class="form-control"></div>
+  <div class="col-md-3"><label class="form-label">По</label><input type="date" name="to" value="{{ period_to }}" class="form-control"></div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Применить</button></div>
+</form>
+<p class="text-muted">Период: {{ period_from }} — {{ period_to }}</p>
+<div class="row g-3">
+  <div class="col-md-4"><div class="stat-card"><div class="stat-value">{{ enrolled }}</div><div class="stat-label">Зачислено</div></div></div>
+  <div class="col-md-4"><div class="stat-card"><div class="stat-value">{{ expelled }}</div><div class="stat-label">Отчислено</div></div></div>
+  <div class="col-md-4"><div class="stat-card"><div class="stat-value">{{ graduated }}</div><div class="stat-label">Выпущено</div></div></div>
+</div>
+{% endblock %}
