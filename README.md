@@ -81,20 +81,26 @@ docker compose exec web python manage.py seed_demo
 (Django + gunicorn) и одна managed-PostgreSQL.
 
 1. Зарегистрируйтесь на <https://render.com> через GitHub.
-2. Dashboard → **New** → **Blueprint** → выберите репозиторий `Diplom1_1`.
+2. <https://dashboard.render.com/blueprints> → **New Blueprint Instance** →
+   выберите репозиторий `Diplom1_1`, ветку `main`.
 3. Render найдёт `render.yaml`, покажет, что будет создано (web + db) — нажмите **Apply**.
 4. Дождитесь деплоя (~5 минут на первый билд). URL будет вида
-   `https://kindergarten-is.onrender.com`.
-5. Через вкладку **Shell** веб-сервиса один раз заполните БД:
-   ```bash
-   python manage.py seed_demo
-   ```
-6. Открывайте URL и логиньтесь демо-учётками.
+   `https://kindergarten-is.onrender.com`. Демо-данные (`seed_demo`) добавляются
+   автоматически в build-команде — никаких ручных действий после деплоя не нужно.
+5. Открывайте URL и логиньтесь демо-учётками.
 
-**Сброс демо-стенда** (очистка БД + повторный посев):
-```bash
-python manage.py reset_demo
-```
+**Сброс демо-стенда** (очистка БД + повторный посев) — без платного Render Shell:
+
+1. В дашборде → web service `kindergarten-is` → **Environment**.
+2. Найдите переменную `DJANGO_RESET_DEMO`, поменяйте значение с `False` на `True`,
+   сохраните.
+3. **Manual Deploy → Deploy latest commit**. В build-команде выполнится
+   `reset_demo` (= `flush` + `seed_demo`).
+4. После завершения деплоя верните `DJANGO_RESET_DEMO=False` (иначе при каждом
+   следующем деплое БД будет очищаться).
+
+Если у вас платный план с Shell — то же самое одной командой:
+`python manage.py reset_demo`.
 
 > Бесплатный план Render «засыпает» после 15 минут без запросов; первый
 > заход после простоя занимает ~30 секунд (холодный старт). Перед
