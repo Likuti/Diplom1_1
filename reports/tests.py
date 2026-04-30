@@ -9,6 +9,7 @@ from django.urls import reverse
 from attendance.models import AttendanceRecord
 from children.models import Child
 from groups.models import Group
+from staff.models import Employee
 
 User = get_user_model()
 
@@ -54,3 +55,26 @@ class StaffReportTest(TestCase):
         self.client.login(username='t1', password='pass')
         r = self.client.get(reverse('reports:staff'))
         self.assertEqual(r.status_code, 403)
+
+    def test_high_qualification_count_handles_cyrillic_case(self):
+        """Регрессия: SQLite icontains не сворачивает регистр для кириллицы."""
+        head = User.objects.create_user(
+            username='h1', password='pass', role=User.Role.HEAD
+        )
+        Employee.objects.create(
+            last_name='А', first_name='А', position='Воспитатель',
+            qualification='Высшая категория', hire_date=date(2020, 1, 1),
+        )
+        Employee.objects.create(
+            last_name='Б', first_name='Б', position='Воспитатель',
+            qualification='высшая категория', hire_date=date(2020, 1, 1),
+        )
+        Employee.objects.create(
+            last_name='В', first_name='В', position='Воспитатель',
+            qualification='Первая категория', hire_date=date(2020, 1, 1),
+        )
+        self.client.login(username='h1', password='pass')
+        r = self.client.get(reverse('reports:staff'))
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.context['high_qual'], 2)
+        self.assertEqual(r.context['total'], 3)

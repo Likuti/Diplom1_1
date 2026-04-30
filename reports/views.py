@@ -155,7 +155,10 @@ def staff_report(request):
     qs = Employee.objects.filter(is_active=True)
     by_position = Counter(qs.values_list('position', flat=True))
     avg_experience = qs.aggregate(v=Avg('experience_years'))['v'] or 0
-    high_qual = qs.filter(qualification__icontains='высш').count()
+    # SQLite's LIKE/LOWER не сворачивает регистр для кириллицы, поэтому считаем в Python.
+    high_qual = sum(
+        1 for q in qs.values_list('qualification', flat=True) if 'высш' in q.lower()
+    )
     total = qs.count()
     return render(
         request,

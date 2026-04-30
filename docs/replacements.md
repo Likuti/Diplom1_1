@@ -190,6 +190,34 @@ services:
 
 ---
 
+## 10. Подсчёт сотрудников с высшей категорией: `qualification__icontains` → подсчёт в Python
+
+**Что было** (первая редакция `reports/views.py:staff_report`):
+```python
+high_qual = qs.filter(qualification__icontains='высш').count()
+```
+
+**Что в репозитории:**
+```python
+# SQLite's LIKE/LOWER не сворачивает регистр для кириллицы, поэтому считаем в Python.
+high_qual = sum(
+    1 for q in qs.values_list('qualification', flat=True) if 'высш' in q.lower()
+)
+```
+
+**Причина:** В SQLite (используется при локальной разработке)
+`LIKE` и `LOWER()` работают только с ASCII и не сворачивают регистр для
+кириллицы. В результате `qualification__icontains='высш'` не находил записи
+со значением `'Высшая категория'` (с заглавной «В»). На PostgreSQL та же
+строка работает корректно, но проект поддерживает обе СУБД, поэтому подсчёт
+вынесен в Python — `str.lower()` Python'а сворачивает кириллицу корректно
+независимо от backend'а. На отчёт «Кадровый состав» (`/reports/staff/`) это
+напрямую влияет: метрика «С высшей категорией» теперь показывает корректное
+число. Регрессионный тест:
+`reports.tests.StaffReportTest.test_high_qualification_count_handles_cyrillic_case`.
+
+---
+
 ## Итог
 
 Структура приложения, набор моделей, схема БД и ключевые представления
