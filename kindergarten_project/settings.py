@@ -98,6 +98,10 @@ WSGI_APPLICATION = 'kindergarten_project.wsgi.application'
 
 # База данных: PostgreSQL, если задан POSTGRES_DB, иначе SQLite.
 if os.environ.get('POSTGRES_DB'):
+    _pg_options = {}
+    # На managed-PostgreSQL (Render, Railway, Heroku и т.п.) включён SSL.
+    if env_bool('POSTGRES_REQUIRE_SSL', default=False):
+        _pg_options['sslmode'] = 'require'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -106,6 +110,7 @@ if os.environ.get('POSTGRES_DB'):
             'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
             'HOST': os.environ.get('POSTGRES_HOST', 'db'),
             'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+            'OPTIONS': _pg_options,
         }
     }
 else:
@@ -147,3 +152,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
+
+
+# Production-настройки безопасности (включаются автоматически при DEBUG=False).
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30  # 30 дней
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = 'same-origin'
