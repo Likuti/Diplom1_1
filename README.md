@@ -25,7 +25,7 @@
 | Компонент | Версия | Назначение |
 |---|---|---|
 | Python | 3.12 | Язык разработки |
-| Django | 5.0.6 | Веб-фреймворк (MVT) |
+| Django | 5.2 LTS | Веб-фреймворк (MVT) |
 | PostgreSQL | 16 | Основная СУБД (опционально) |
 | SQLite | — | Локальная СУБД по умолчанию |
 | crispy-forms + crispy-bootstrap5 | 2.1 / 2024.2 | Формы |
@@ -61,6 +61,9 @@ python manage.py runserver
 
 ## Запуск в Docker (PostgreSQL)
 
+В контейнере дополнительно ставится `psycopg2-binary` через
+`requirements-postgres.txt` — локально она не нужна.
+
 ```bash
 cp .env.example .env                  # отредактируйте при необходимости
 docker compose up --build -d
@@ -69,13 +72,16 @@ docker compose exec web python manage.py seed_demo
 
 Приложение будет доступно на <http://localhost:8000/>.
 
+> Если хотите подключаться к собственному PostgreSQL без Docker,
+> установите дополнительный пакет вручную: `pip install -r requirements-postgres.txt`.
+
 ## Тесты
 
 ```bash
 python manage.py test
 ```
 
-В проекте 26 тестов, покрывающих модели, представления, ролевой доступ и
+В проекте 27 тестов, покрывающих модели, представления, ролевой доступ и
 корректность сохранения посещаемости (см. `*/tests.py`).
 
 ## Структура проекта
