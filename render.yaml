@@ -9,6 +9,11 @@ services:
       pip install -r requirements-postgres.txt
       python manage.py collectstatic --noinput
       python manage.py migrate --noinput
+      if [ "$DJANGO_RESET_DEMO" = "True" ]; then \
+        python manage.py reset_demo; \
+      else \
+        python manage.py seed_demo; \
+      fi
     startCommand: |
       gunicorn kindergarten_project.wsgi:application --bind 0.0.0.0:$PORT --workers 3
     healthCheckPath: /accounts/login/
@@ -25,6 +30,11 @@ services:
         value: "https://*.onrender.com"
       - key: POSTGRES_REQUIRE_SSL
         value: "True"
+      # Включите DJANGO_RESET_DEMO=True в Environment и сделайте Manual Deploy,
+      # чтобы при следующем деплое выполнился reset_demo (flush + seed_demo).
+      # После деплоя верните значение в False (или удалите переменную).
+      - key: DJANGO_RESET_DEMO
+        value: "False"
       - key: POSTGRES_HOST
         fromDatabase:
           name: kindergarten-db
