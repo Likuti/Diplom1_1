@@ -1,0 +1,14 @@
+.alert-success { --bs-alert-bg: #d1e7dd; --bs-alert-color: #0a3622; --bs-alert-border-color: #a3cfbb; }
+.alert-error,
+.alert-danger { --bs-alert-bg: #f8d7da; --bs-alert-color: #58151c; --bs-alert-border-color: #f1aeb5; }
+.alert-warning { --bs-alert-bg: #fff3cd; --bs-alert-color: #664d03; }
+.alert-info { --bs-alert-bg: #cff4fc; --bs-alert-color: #055160; }
+
+.stat-card { padding: 1.25rem; border-radius: .5rem; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.stat-card .stat-value { font-size: 2rem; font-weight: 600; color: #0d6efd; }
+.stat-card .stat-label { color: #6c757d; font-size: .9rem; }
+
+.bar { height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden; }
+.bar > span { display: block; height: 100%; background: #198754; }
+.bar.warn > span { background: #fd7e14; }
+.bar.danger > span { background: #dc3545; }

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Отчёт по посещаемости{% endblock %}
+{% block content %}
+<h2 class="mb-4">Отчёт по посещаемости группы</h2>
+
+<form method="get" class="row g-3 align-items-end mb-4">
+  <div class="col-md-4">
+    <label class="form-label">Группа</label>
+    <select name="group_id" class="form-select">
+      <option value="">— Выбрать —</option>
+      {% for g in groups %}<option value="{{ g.id }}" {% if g.id == selected_group_id %}selected{% endif %}>{{ g.name }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3"><label class="form-label">С</label><input type="date" name="from" value="{{ period_from }}" class="form-control"></div>
+  <div class="col-md-3"><label class="form-label">По</label><input type="date" name="to" value="{{ period_to }}" class="form-control"></div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Построить</button></div>
+</form>
+
+{% if selected_group_id %}
+  <p class="text-muted">Период: {{ period_from }} — {{ period_to }}. Средняя посещаемость по группе: <strong>{{ summary_pct }}%</strong></p>
+  <div class="card">
+    <table class="table mb-0">
+      <thead class="table-light"><tr><th>Воспитанник</th><th>Посещений</th><th>Всего отметок</th><th>%</th></tr></thead>
+      <tbody>
+        {% for r in rows %}
+          <tr><td>{{ r.child }}</td><td>{{ r.present }}</td><td>{{ r.total }}</td><td>{{ r.pct }}%</td></tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-center text-muted">Нет записей за указанный период</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">Выберите группу и период, чтобы построить отчёт.</div>
+{% endif %}
+{% endblock %}
