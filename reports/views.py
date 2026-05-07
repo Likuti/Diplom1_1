@@ -1,6 +1,6 @@
 """Представления приложения reports.
 
-dashboard — взят из курсовой (раздел 3.1) с минимальными доработками.
+dashboard — взят из диплома (раздел 3.1) с минимальными доработками.
 Дополнительно реализованы:
 - attendance_report: сводный отчёт по посещаемости группы за период,
 - groups_report: отчёт по наполняемости всех групп,
@@ -33,7 +33,7 @@ def _parse_date(raw: str | None, default: date) -> date:
 
 @role_required('admin', 'head', 'teacher')
 def dashboard(request):
-    """Главная страница после входа: сводка по учреждению (курсовая, 3.1)."""
+    """Главная страница после входа: сводка по учреждению (диплом, 3.1)."""
     total_active_children = Child.objects.filter(status='active').count()
     total_employees = Employee.objects.filter(is_active=True).count()
     total_groups = Group.objects.count()
