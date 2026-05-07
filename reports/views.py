@@ -1,12 +1,11 @@
 """Представления приложения reports.
 
-dashboard — взят из курсовой (раздел 3.1) с минимальными доработками.
-Дополнительно реализованы:
-- attendance_report: сводный отчёт по посещаемости группы за период,
-- groups_report: отчёт по наполняемости всех групп,
-- staff_report: отчёт по кадровому составу,
-- contingent_report: отчёт по движению контингента.
-Все отчёты — из функционального требования 5 («Подсистема отчётности»).
+Реализует функциональное требование «Подсистема отчётности»:
+- dashboard: сводная страница с показателями учреждения;
+- attendance_report: сводный отчёт по посещаемости группы за период;
+- groups_report: отчёт по наполняемости всех групп;
+- staff_report: отчёт по кадровому составу;
+- contingent_report: отчёт по движению контингента (форма 85-К Росстата).
 """
 
 from collections import Counter
@@ -33,7 +32,7 @@ def _parse_date(raw: str | None, default: date) -> date:
 
 @role_required('admin', 'head', 'teacher')
 def dashboard(request):
-    """Главная страница после входа: сводка по учреждению (курсовая, 3.1)."""
+    """Главная страница после входа: сводка показателей учреждения."""
     total_active_children = Child.objects.filter(status='active').count()
     total_employees = Employee.objects.filter(is_active=True).count()
     total_groups = Group.objects.count()
