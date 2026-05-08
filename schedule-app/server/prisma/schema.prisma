@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Schedule {
+  id        String   @id @default(uuid())
+  date      String
+  dayOfWeek String
+  blocks    Json
+  isDraft   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("schedules")
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  name      String
+  blocks    Json
+  createdAt DateTime @default(now())
+
+  @@map("templates")
+}
+
+model Worker {
+  id        String   @id @default(uuid())
+  name      String
+  shortName String
+  position  String?
+  createdAt DateTime @default(now())
+
+  @@map("workers")
+}
